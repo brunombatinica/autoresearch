@@ -1,0 +1,62 @@
+{
+  "name": "trace-ai-analysis-external",
+  "build": {
+    "dockerfile": "./Dockerfile",
+    "context": "../.."
+  },
+  // 1. GPU CONFIGURATION
+  "runArgs": [
+    "--name=trace-ai-analysis-external-container",
+    //    "--gpus", "device=6",        // Give access to H100 7
+    "--shm-size=8g", // Prevent PyTorch DataLoader crashes
+    "--ulimit",
+    "memlock=-1", // optimize memory locking for CUDA
+    "--cpus",
+    "4" // 4 cores
+  ],
+  // 1.1. ENVIRONMENT VARIABLES
+  "containerEnv": {
+    "HIGH_RISK": "false"
+  },
+  "remoteEnv": {
+    "HIGH_RISK": "false"
+  },
+  // 2. DATA MOUNTING
+  "mounts": [
+    // MOUNT 1: Codebase (Implicitly handled by VS Code, but good to be explicit)
+    "source=${localWorkspaceFolder},target=/workspace,type=bind"
+    // MOUNT 2: Data (READ-ONLY for safety)
+    // UPDATE THIS PATH ↓
+    //   "source=/mnt/raid0/bb2238/,target=/data/,type=bind,consistency=cached,readonly"
+    //  "source=/mnt/raid0/bb2238/,target=/data/,type=bind,consistency=cached",
+    // "source=/mnt/raid0/bb2238/,target=/data/raid0/,type=bind,consistency=cached"
+    // "source=/mnt/raid0/bb2238/trace_ai_site_data/synthetic_data,target=/data/trace_ai_site_data/synthetic_data,type=bind,consistency=cached"
+    // "source=/mnt/nfs_yale_ecg_signals/,target=/mnt/nfs_yale_ecg_signals/,type=bind,consistency=cached,readonly"
+    //   "source=/home/bb2238/mnt/,target=/mnt/,type=bind,consistency=cached,readonly" - to mount the ~/mnt directory
+  ],
+  "workspaceFolder": "/home/bb2238/github/trace-ai-analysis",
+  // 3. VS CODE CUSTOMIZATIONS
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-toolsai.jupyter", // Jupyter support - allows us to run jupyter notebooks in the container
+        "ms-python.vscode-docker",
+        "ms-python.black-formatter", // Auto-formatter
+        "njpwerner.autodocstring", // Docstring generator
+        "nvidia.nsight-vscode-edition",
+        "mechatroner.rainbow-csv"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/opt/conda/bin/python",
+        "python.formatting.provider": "black" // auto-formatter for python code using black package
+      }
+    }
+  },
+  // permission fix to avoid files being created as root
+  "remoteUser": "bb2238",
+  // below forces the container user (dev) to adopt my Host UID
+  "updateRemoteUser": true,
+  "postCreateCommand": "bash -lc 'bash /home/bb2238/github/trace-ai-analysis/.devcontainer/external/setup.sh'",
+  "postStartCommand": "bash -lc 'if [ -f /home/bb2238/github/trace-ai-analysis/.env ]; then set -a; source /home/bb2238/github/trace-ai-analysis/.env; set +a; else echo \"No /home/bb2238/github/trace-ai-analysis/.env found; skipping env load.\"; fi'"
+}
