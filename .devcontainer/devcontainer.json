@@ -7,7 +7,7 @@
   // 1. GPU CONFIGURATION
   "runArgs": [
     "--name=autoresearch-container",
-    "--gpus", "device=6",        // Give access to H100 7
+    // "--gpus", "device=6",     // Uncomment on host with NVIDIA + that GPU index
     "--cap-drop=ALL",
     "--security-opt",
     "no-new-privileges:true",
@@ -32,12 +32,7 @@
     "source=${localWorkspaceFolder},target=/workspace,type=bind"
     // MOUNT 2: Data (READ-ONLY for safety)
     // UPDATE THIS PATH ↓
-    //   "source=/mnt/raid0/bb2238/,target=/data/,type=bind,consistency=cached,readonly"
-    //  "source=/mnt/raid0/bb2238/,target=/data/,type=bind,consistency=cached",
-    // "source=/mnt/raid0/bb2238/,target=/data/raid0/,type=bind,consistency=cached"
-    // "source=/mnt/raid0/bb2238/trace_ai_site_data/synthetic_data,target=/data/trace_ai_site_data/synthetic_data,type=bind,consistency=cached"
-    // "source=/mnt/nfs_yale_ecg_signals/,target=/mnt/nfs_yale_ecg_signals/,type=bind,consistency=cached,readonly"
-    //   "source=/home/bb2238/mnt/,target=/mnt/,type=bind,consistency=cached,readonly" - to mount the ~/mnt directory
+    // "source=/mnt/raid0/bb2238/autoresearch,target=/data/,type=bind,consistency=cached,readonly"
   ],
   "workspaceFolder": "/workspace",
   // 3. VS CODE CUSTOMIZATIONS

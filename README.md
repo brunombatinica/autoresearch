@@ -45,3 +45,23 @@ cat ~/.codex/config.toml
 cat ~/.claude/settings.json
 ```
 
+## Troubleshooting dev container build
+
+**`dockerfile parse error ... unknown instruction: <<<<<<<`**
+
+The devcontainers CLI merges your `.devcontainer/Dockerfile` into a generated `Dockerfile-with-features`. If your `Dockerfile` still contains **git merge conflict markers** (`<<<<<<<`, `=======`, `>>>>>>>`), Docker treats them as invalid instructions.
+
+1. Open `.devcontainer/Dockerfile` on the machine that fails to build.
+2. Remove every conflict marker and keep a single coherent file (this repo’s version should start with `# autoresearch dev container base image` and `FROM mcr.microsoft.com/devcontainers/miniconda:3` with **no** `<<<<<<<` lines).
+3. Save, then **Rebuild** the dev container.
+
+To confirm before rebuild:
+
+```bash
+grep -n '<<<<<<\|=======\|>>>>>>>' .devcontainer/Dockerfile || echo "no conflict markers"
+```
+
+**Still seeing “Trace AI” names**
+
+Image tags from VS Code look like `vsc-autoresearch-…` when `devcontainer.json` `"name"` is `autoresearch-container`. Old local images may keep previous labels; remove unused images or rebuild without cache if needed.
+
