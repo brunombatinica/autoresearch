@@ -7,7 +7,7 @@
   // 1. GPU CONFIGURATION
   "runArgs": [
     "--name=autoresearch-container",
-    //    "--gpus", "device=6",        // Give access to H100 7
+    "--gpus", "device=6",        // Give access to H100 7
     "--cap-drop=ALL",
     "--security-opt",
     "no-new-privileges:true",
