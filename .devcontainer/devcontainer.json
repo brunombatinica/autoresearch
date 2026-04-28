@@ -1,6 +1,6 @@
 {
-    "name": "autoresearch-container",
-    "build": {
+  "name": "autoresearch-container",
+  "build": {
     "dockerfile": "./Dockerfile",
     "context": ""
   },

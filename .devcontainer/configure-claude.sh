@@ -14,7 +14,35 @@ setup_dirs() {
 }
 
 # ---------------------------------------------------------------------------
+<<<<<<< HEAD
+# 2. ntfy notification hook script
+# ---------------------------------------------------------------------------
+install_notify_hook() {
+  local hook="${HOOKS_DIR}/notify.sh"
+
+  cat > "${hook}" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+INPUT=$(cat)
+MESSAGE=$(printf '%s' "$INPUT" | jq -r '.message // "Claude needs attention"')
+TITLE=$(printf '%s' "$INPUT" | jq -r '.title // "Claude Code"')
+
+curl -s \
+  -H "Title: $TITLE" \
+  -d "$MESSAGE" \
+  "https://ntfy.sh/bruno_agents" > /dev/null 2>&1 || true
+EOF
+
+  chmod +x "${hook}"
+  echo "Installed ntfy hook: ${hook}"
+}
+
+# ---------------------------------------------------------------------------
+# 3. settings.json — merge permissions and hooks (idempotent)
+=======
 # 2. settings.json — enforce minimal permissions (idempotent)
+>>>>>>> e8fae2866bc9d05c0d46f466c10dcdc258f5b6bf
 # ---------------------------------------------------------------------------
 configure_settings() {
   local tmp
@@ -39,9 +67,47 @@ const existingAllow = Array.isArray(s.permissions.allow)
   ? s.permissions.allow.filter((v) => typeof v === "string")
   : [];
 
+<<<<<<< HEAD
+// Safe read-only / non-destructive commands to always allow
+const DEFAULT_ALLOW = [
+  "WebFetch",
+  "Bash(find *)",
+  "Bash(cat *)",
+  "Bash(grep *)",
+  "Bash(rg *)",
+  "Bash(ls *)",
+  "Bash(ls)",
+  "Bash(echo *)",
+  "Bash(printf *)",
+  "Bash(head *)",
+  "Bash(tail *)",
+  "Bash(wc *)",
+  "Bash(pwd)",
+  "Bash(which *)",
+  "Bash(du *)",
+  "Bash(df *)",
+  "Bash(stat *)",
+  "Bash(file *)",
+  "Bash(sort *)",
+  "Bash(uniq *)",
+  "Bash(cut *)",
+  "Bash(awk *)",
+  "Bash(sed *)",
+  "Bash(tr *)",
+  "Bash(diff *)",
+  "Bash(tree *)",
+  "Bash(date)",
+  "Bash(date *)",
+  "Bash(env)",
+  "Bash(printenv *)",
+  "Bash(uname *)",
+  "Bash(id)",
+  "Bash(whoami)",
+=======
 // Minimal default allowlist to reduce agent shell permissions.
 const DEFAULT_ALLOW = [
   "WebFetch",
+>>>>>>> e8fae2866bc9d05c0d46f466c10dcdc258f5b6bf
 ];
 
 // Merge: keep any existing custom entries, add defaults if not present
@@ -51,6 +117,23 @@ for (const entry of DEFAULT_ALLOW) {
 }
 s.permissions.allow = allow;
 
+<<<<<<< HEAD
+// -- hooks --
+const HOOK_CMD = "~/.claude/hooks/notify.sh";
+const hookEntry = { matcher: "", hooks: [{ type: "command", command: HOOK_CMD }] };
+
+if (!s.hooks || typeof s.hooks !== "object") s.hooks = {};
+
+for (const event of ["Notification", "Stop"]) {
+  if (!Array.isArray(s.hooks[event])) s.hooks[event] = [];
+  const exists = s.hooks[event].some((h) =>
+    Array.isArray(h.hooks) && h.hooks.some((c) => c.command === HOOK_CMD)
+  );
+  if (!exists) s.hooks[event].push(hookEntry);
+}
+
+=======
+>>>>>>> e8fae2866bc9d05c0d46f466c10dcdc258f5b6bf
 fs.writeFileSync(outputPath, JSON.stringify(s, null, 2) + "\n", "utf8");
 EOF
 
@@ -64,6 +147,10 @@ EOF
 # ---------------------------------------------------------------------------
 main() {
   setup_dirs
+<<<<<<< HEAD
+  install_notify_hook
+=======
+>>>>>>> e8fae2866bc9d05c0d46f466c10dcdc258f5b6bf
   configure_settings
 }
 
