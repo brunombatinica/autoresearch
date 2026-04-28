@@ -27,7 +27,7 @@ BEGIN {
 
   if (in_section && line ~ /^\[[^]]+\][[:space:]]*$/) {
     if (!wrote_setting) {
-      print "network_access = true"
+      print "network_access = false"
       wrote_setting = 1
     }
     in_section = 0
@@ -35,7 +35,7 @@ BEGIN {
 
   if (in_section && line ~ /^[[:space:]]*network_access[[:space:]]*=/) {
     if (!wrote_setting) {
-      print "network_access = true"
+      print "network_access = false"
       wrote_setting = 1
     }
     next
@@ -47,9 +47,9 @@ END {
   if (!saw_section) {
     print ""
     print "[sandbox_workspace_write]"
-    print "network_access = true"
+    print "network_access = false"
   } else if (in_section && !wrote_setting) {
-    print "network_access = true"
+    print "network_access = false"
   }
 }
 ' "${CODEX_CONFIG}" > "${tmp_file}"

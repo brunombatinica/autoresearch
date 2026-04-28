@@ -1,13 +1,18 @@
 {
-  "name": "trace-ai-analysis-external",
+  "name": "autoresearch-container",
   "build": {
     "dockerfile": "./Dockerfile",
-    "context": "../.."
+    "context": ""
   },
   // 1. GPU CONFIGURATION
   "runArgs": [
-    "--name=trace-ai-analysis-external-container",
+    "--name=autoresearch-container",
     //    "--gpus", "device=6",        // Give access to H100 7
+    "--cap-drop=ALL",
+    "--security-opt",
+    "no-new-privileges:true",
+    "--pids-limit",
+    "512",
     "--shm-size=8g", // Prevent PyTorch DataLoader crashes
     "--ulimit",
     "memlock=-1", // optimize memory locking for CUDA
@@ -34,7 +39,7 @@
     // "source=/mnt/nfs_yale_ecg_signals/,target=/mnt/nfs_yale_ecg_signals/,type=bind,consistency=cached,readonly"
     //   "source=/home/bb2238/mnt/,target=/mnt/,type=bind,consistency=cached,readonly" - to mount the ~/mnt directory
   ],
-  "workspaceFolder": "/home/bb2238/github/trace-ai-analysis",
+  "workspaceFolder": "/workspace",
   // 3. VS CODE CUSTOMIZATIONS
   "customizations": {
     "vscode": {
@@ -57,6 +62,6 @@
   "remoteUser": "bb2238",
   // below forces the container user (dev) to adopt my Host UID
   "updateRemoteUser": true,
-  "postCreateCommand": "bash -lc 'bash /home/bb2238/github/trace-ai-analysis/.devcontainer/external/setup.sh'",
-  "postStartCommand": "bash -lc 'if [ -f /home/bb2238/github/trace-ai-analysis/.env ]; then set -a; source /home/bb2238/github/trace-ai-analysis/.env; set +a; else echo \"No /home/bb2238/github/trace-ai-analysis/.env found; skipping env load.\"; fi'"
+  "postCreateCommand": "bash -lc 'bash /workspace/.devcontainer/setup.sh'",
+  "postStartCommand": "bash -lc 'if [ -f /workspace/.env ]; then echo \"Found /workspace/.env; not sourcing automatically for safety.\"; fi'"
 }

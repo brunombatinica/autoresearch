@@ -14,6 +14,7 @@ setup_dirs() {
 }
 
 # ---------------------------------------------------------------------------
+<<<<<<< HEAD
 # 2. ntfy notification hook script
 # ---------------------------------------------------------------------------
 install_notify_hook() {
@@ -39,6 +40,9 @@ EOF
 
 # ---------------------------------------------------------------------------
 # 3. settings.json — merge permissions and hooks (idempotent)
+=======
+# 2. settings.json — enforce minimal permissions (idempotent)
+>>>>>>> e8fae2866bc9d05c0d46f466c10dcdc258f5b6bf
 # ---------------------------------------------------------------------------
 configure_settings() {
   local tmp
@@ -63,6 +67,7 @@ const existingAllow = Array.isArray(s.permissions.allow)
   ? s.permissions.allow.filter((v) => typeof v === "string")
   : [];
 
+<<<<<<< HEAD
 // Safe read-only / non-destructive commands to always allow
 const DEFAULT_ALLOW = [
   "WebFetch",
@@ -98,6 +103,11 @@ const DEFAULT_ALLOW = [
   "Bash(uname *)",
   "Bash(id)",
   "Bash(whoami)",
+=======
+// Minimal default allowlist to reduce agent shell permissions.
+const DEFAULT_ALLOW = [
+  "WebFetch",
+>>>>>>> e8fae2866bc9d05c0d46f466c10dcdc258f5b6bf
 ];
 
 // Merge: keep any existing custom entries, add defaults if not present
@@ -107,6 +117,7 @@ for (const entry of DEFAULT_ALLOW) {
 }
 s.permissions.allow = allow;
 
+<<<<<<< HEAD
 // -- hooks --
 const HOOK_CMD = "~/.claude/hooks/notify.sh";
 const hookEntry = { matcher: "", hooks: [{ type: "command", command: HOOK_CMD }] };
@@ -121,6 +132,8 @@ for (const event of ["Notification", "Stop"]) {
   if (!exists) s.hooks[event].push(hookEntry);
 }
 
+=======
+>>>>>>> e8fae2866bc9d05c0d46f466c10dcdc258f5b6bf
 fs.writeFileSync(outputPath, JSON.stringify(s, null, 2) + "\n", "utf8");
 EOF
 
@@ -134,7 +147,10 @@ EOF
 # ---------------------------------------------------------------------------
 main() {
   setup_dirs
+<<<<<<< HEAD
   install_notify_hook
+=======
+>>>>>>> e8fae2866bc9d05c0d46f466c10dcdc258f5b6bf
   configure_settings
 }
 
