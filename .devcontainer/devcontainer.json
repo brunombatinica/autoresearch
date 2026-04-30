@@ -2,7 +2,7 @@
   "name": "autoresearch-container",
   "build": {
     "dockerfile": "./Dockerfile",
-    "context": ""
+    "context": ".."
   },
   // 1. GPU CONFIGURATION
   "runArgs": [
