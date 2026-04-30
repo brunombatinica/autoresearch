@@ -28,7 +28,12 @@ bash "${SCRIPT_DIR}/configure-cursor.sh"
 
 # Existing external post-create setup
 /opt/conda/bin/conda init bash
-/opt/conda/bin/pip install -e /workspace
+
+# Project dependencies (UV-native workflow)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+export PATH="${HOME}/.local/bin:${PATH}"
+uv sync
+
 printf "set -g mouse on\nbind-key -T copy-mode-vi WheelUpPane send-keys -X scroll-up\nbind-key -T copy-mode-vi WheelDownPane send-keys -X scroll-down\nbind-key -T copy-mode WheelUpPane send-keys -X scroll-up\nbind-key -T copy-mode WheelDownPane send-keys -X scroll-down\n" > "${HOME}/.tmux.conf"
 
 echo "External post-create setup complete."

@@ -55,8 +55,5 @@ WORKDIR /workspace
 # Switch to the non-root user BEFORE installing python packages
 USER $USERNAME
 
-# Install Python packages
-# Since we're in a Conda image, it's safer to use a requirements file 
-# but stay in the 'base' environment.
-COPY --chown=$USERNAME:$USER_GID requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Python dependencies are installed at post-create time via `uv sync`
+# from the mounted workspace (`/workspace`).
