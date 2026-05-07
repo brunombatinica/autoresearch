@@ -4,10 +4,17 @@
     "dockerfile": "./Dockerfile",
     "context": ".."
   },
+  // GPU is optional for host requirement checks (project still runs CPU-only). runArgs still
+  // request NVIDIA GPU 0 when you start the container; on hosts without the NVIDIA Container
+  // Toolkit, comment out the "--gpus" / "device=0" pair below or override in devcontainer.local.json.
+  "hostRequirements": {
+    "gpu": "optional"
+  },
   // 1. GPU CONFIGURATION
   "runArgs": [
     "--name=autoresearch-container",
-    // "--gpus", "device=6",     // Uncomment on host with NVIDIA + that GPU index
+    "--gpus",
+    "device=0",
     "--cap-drop=ALL",
     "--security-opt",
     "no-new-privileges:true",

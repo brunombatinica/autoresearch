@@ -8,6 +8,15 @@ if [[ -f "${SCRIPT_DIR}/bootstrap.sh" ]]; then
   bash "${SCRIPT_DIR}/bootstrap.sh"
 fi
 
+# UV — download and install the Astral uv binary, then ensure it is on PATH for this session.
+# https://docs.astral.sh/uv/getting-started/installation/
+curl -LsSf https://astral.sh/uv/install.sh | sh
+export PATH="${HOME}/.local/bin:${PATH}"
+command -v uv >/dev/null || {
+  echo "error: uv not found on PATH after install (~/.local/bin missing from PATH?)" >&2
+  exit 1
+}
+
 # Codex install (global install)
 sudo npm install -g --no-update-notifier @openai/codex
 
@@ -30,8 +39,6 @@ bash "${SCRIPT_DIR}/configure-cursor.sh"
 /opt/conda/bin/conda init bash
 
 # Project dependencies (UV-native workflow)
-curl -LsSf https://astral.sh/uv/install.sh | sh
-export PATH="${HOME}/.local/bin:${PATH}"
 uv sync
 
 printf "set -g mouse on\nbind-key -T copy-mode-vi WheelUpPane send-keys -X scroll-up\nbind-key -T copy-mode-vi WheelDownPane send-keys -X scroll-down\nbind-key -T copy-mode WheelUpPane send-keys -X scroll-up\nbind-key -T copy-mode WheelDownPane send-keys -X scroll-down\n" > "${HOME}/.tmux.conf"
