@@ -10,8 +10,7 @@ Minimal fork of Karpathy's `autoresearch`, intended to run inside a dev containe
 
 ## Agent + privilege model (current)
 
-- Container user: `bb2238`
-- `bb2238` has passwordless sudo in container (`NOPASSWD:ALL`)
+- Container user: `bb2238` (no `sudo` in the image; `postCreate` stays user-local only)
 - Code is mounted to `/workspace` (bind mount from local repo)
 - Container runtime hardening:
   - `--cap-drop=ALL`
@@ -29,7 +28,7 @@ Minimal fork of Karpathy's `autoresearch`, intended to run inside a dev containe
 
 Defined in `.devcontainer/setup.sh`:
 
-- Codex: global npm install (`sudo npm install -g @openai/codex`)
+- Codex: user-local npm global install (`npm config set prefix ~/.local` then `npm install -g @openai/codex`)
 - Claude: official installer (`curl ... | bash`)
 - Cursor Agent: official installer (`curl ... | bash`)
 
@@ -40,7 +39,9 @@ Run inside container:
 ```bash
 whoami
 id
-sudo -n true && echo "sudo: yes" || echo "sudo: no"
+command -v codex
+command -v uv
+command -v agent
 cat ~/.codex/config.toml
 cat ~/.claude/settings.json
 ```

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Runs under no-new-privileges: do not use sudo here (and keep installs user-writable).
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -17,8 +18,11 @@ command -v uv >/dev/null || {
   exit 1
 }
 
-# Codex install (global install)
-sudo npm install -g --no-update-notifier @openai/codex
+# Codex CLI — user-local global install under ~/.local (no sudo)
+mkdir -p "${HOME}/.local"
+npm config set prefix "${HOME}/.local"
+export PATH="${HOME}/.local/bin:${PATH}"
+npm install -g --no-update-notifier @openai/codex
 
 # Codex config (workspace-write sandbox network disabled by default)
 bash "${SCRIPT_DIR}/configure-codex.sh"

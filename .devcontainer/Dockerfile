@@ -9,7 +9,6 @@ LABEL org.opencontainers.image.description="Autoresearch development container"
 
 # System basics
 RUN apt-get update && apt-get install -y \
-    sudo \
     tmux \
     git \
     curl \
@@ -33,13 +32,7 @@ RUN if getent passwd $USER_UID > /dev/null 2>&1; then \
 
 # Create the new user with the same ID as the host user
 RUN groupadd --gid $USER_GID $USERNAME \
-    # add user with default bash shell
-    && useradd --uid $USER_UID --gid $USER_GID -m -s /bin/bash $USERNAME \
-    # Explicitly create sudoers directory
-    && mkdir -p /etc/sudoers.d \
-    # Allow passwordless sudo inside sandbox container
-    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
-    && chmod 0440 /etc/sudoers.d/$USERNAME
+    && useradd --uid $USER_UID --gid $USER_GID -m -s /bin/bash $USERNAME
 
 # Install Node.js 20.x (for Codex CLI)
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
