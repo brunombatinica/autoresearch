@@ -9,6 +9,10 @@ if [[ -f "${SCRIPT_DIR}/bootstrap.sh" ]]; then
   bash "${SCRIPT_DIR}/bootstrap.sh"
 fi
 
+# Use copy mode for uv cache linking in bind-mounted/container filesystems where
+# hardlinks may fail across mount boundaries (avoids warning + fallback noise).
+export UV_LINK_MODE=copy
+
 # UV — download and install the Astral uv binary, then ensure it is on PATH for this session.
 # https://docs.astral.sh/uv/getting-started/installation/
 curl -LsSf https://astral.sh/uv/install.sh | sh
